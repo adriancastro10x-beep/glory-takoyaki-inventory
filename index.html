@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Glory Takoyaki Inventory</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  padding:15px;
+  background:#f4f4f4;
+  font-family:Arial, sans-serif;
+  color:#222;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  margin:10px 0 5px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#777;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  padding:18px;
+  margin-bottom:15px;
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.card h2{
+  margin-top:0;
+  font-size:20px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:12px;
+  margin-bottom:5px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:16px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.check{
+  background:#111;
+  color:white;
+}
+
+.reset{
+  background:#ddd;
+  color:#222;
+}
+
+.result{
+  display:none;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+  border-bottom:none;
+}
+
+.value{
+  font-weight:bold;
+  text-align:right;
+}
+
+.total{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.status{
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.ok{
+  color:#168a38;
+}
+
+.short{
+  color:#d71919;
+}
+
+.extra{
+  color:#d27b00;
+}
+
+.salary{
+  background:#eef9ee;
+  border:2px solid #3ca64c;
+}
+
+.salary .final{
+  font-size:28px;
+  font-weight:bold;
+  color:#168a38;
+}
+
+.error{
+  display:none;
+  background:#ffe7e7;
+  color:#b00000;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+  font-weight:bold;
+}
+
+.small{
+  font-size:13px;
+  color:#777;
+  margin-top:5px;
+}
+
+.section-title{
+  margin-top:20px;
+  font-size:16px;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🐙 Glory Takoyaki</h1>
+<div class="subtitle">Inventory & Salary Calculator</div>
+
+<!-- VENDOR -->
+<div class="card">
+
+<h2>👤 Vendor Information</h2>
+
+<label>Vendor Name</label>
+<input type="text" id="vendor" placeholder="Enter vendor name">
+
+<label>Date</label>
+<input type="date" id="date">
+
+</div>
+
+
+<!-- STARTING INVENTORY -->
+<div class="card">
+
+<h2>📦 Starting Inventory</h2>
+
+<div class="grid">
+
+<div>
+<label>Bonito (grams)</label>
+<input type="number" id="startBonito" value="0">
+</div>
+
+<div>
+<label>Floss (grams)</label>
+<input type="number" id="startFloss" value="0">
+</div>
+
+<div>
+<label>Regular Cups</label>
+<input type="number" id="startCups" value="0">
+</div>
+
+<div>
+<label>Promo Boxes</label>
+<input type="number" id="startBoxes" value="0">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- STANDARDS -->
+<div class="card">
+
+<h2>⚖️ Topping Standards</h2>
+
+<div class="section-title">Regular</div>
+
+<div class="grid">
+
+<div>
+<label>Bonito Min (g)</label>
+<input type="number" step="0.01" id="regBonitoMin" value="1">
+</div>
+
+<div>
+<label>Bonito Max (g)</label>
+<input type="number" step="0.01" id="regBonitoMax" value="2">
+</div>
+
+<div>
+<label>Floss (g)</label>
+<input type="number" step="0.01" id="regFloss" value="1">
+</div>
+
+</div>
+
+
+<div class="section-title">Promo</div>
+
+<div class="grid">
+
+<div>
+<label>Bonito Min (g)</label>
+<input type="number" step="0.01" id="promoBonitoMin" value="2">
+</div>
+
+<div>
+<label>Bonito Max (g)</label>
+<input type="number" step="0.01" id="promoBonitoMax" value="3">
+</div>
+
+<div>
+<label>Floss (g)</label>
+<input type="number" step="0.01" id="promoFloss" value="2">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- REGULAR SALES -->
+<div class="card">
+
+<h2>🟢 Regular Sales</h2>
+
+<div class="grid">
+
+<div>
+<label>Classic ₱60</label>
+<input type="number" id="regClassic" value="0">
+</div>
+
+<div>
+<label>Premium ₱65</label>
+<input type="number" id="regPremium" value="0">
+</div>
+
+<div>
+<label>Melted Cheese ₱70</label>
+<input type="number" id="regMelted" value="0">
+</div>
+
+<div>
+<label>Overload ₱80</label>
+<input type="number" id="regOverload" value="0">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PROMO SALES -->
+<div class="card">
+
+<h2>🔵 Promo Sales</h2>
+
+<div class="grid">
+
+<div>
+<label>Classic ₱120</label>
+<input type="number" id="promoClassic" value="0">
+</div>
+
+<div>
+<label>Premium ₱130</label>
+<input type="number" id="promoPremium" value="0">
+</div>
+
+<div>
+<label>Melted Cheese ₱140</label>
+<input type="number" id="promoMelted" value="0">
+</div>
+
+<div>
+<label>Overload ₱160</label>
+<input type="number" id="promoOverload" value="0">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ADD ONS -->
+<div class="card">
+
+<h2>➕ Add-ons</h2>
+
+<div class="grid">
+
+<div>
+<label>Bonito Add-on ₱10</label>
+<input type="number" id="addonBonito" value="0">
+</div>
+
+<div>
+<label>Floss Add-on ₱10</label>
+<input type="number" id="addonFloss" value="0">
+</div>
+
+</div>
+
+<div class="small">
+Bonito add-on = 2g per order<br>
+Floss add-on = 1g per order
+</div>
+
+</div>
+
+
+<!-- ACTUAL LO -->
+<div class="card">
+
+<h2>📋 Actual L.O.</h2>
+
+<div class="grid">
+
+<div>
+<label>Actual Bonito (g)</label>
+<input type="number" step="0.01" id="actualBonito" value="0">
+</div>
+
+<div>
+<label>Actual Floss (g)</label>
+<input type="number" step="0.01" id="actualFloss" value="0">
+</div>
+
+<div>
+<label>Actual Regular Cups</label>
+<input type="number" id="actualCups" value="0">
+</div>
+
+<div>
+<label>Actual Promo Boxes</label>
+<input type="number" id="actualBoxes" value="0">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MONEY -->
+<div class="card">
+
+<h2>💰 Money</h2>
+
+<label>Cash Remit</label>
+<input type="number" step="0.01" id="remit" value="0">
+
+<label>GCash</label>
+<input type="number" step="0.01" id="gcash" value="0">
+
+<label>Gas Expense</label>
+<input type="number" step="0.01" id="gas" value="0">
+
+<label>Other Expenses</label>
+<input type="number" step="0.01" id="expenses" value="0">
+
+</div>
+
+
+<!-- BUTTONS -->
+<div class="card">
+
+<button type="button" class="check" onclick="checkAll()">
+CHECK INVENTORY & SALARY
+</button>
+
+<button type="button" class="reset" onclick="resetAll()">
+RESET
+</button>
+
+</div>
+
+
+<!-- ERROR -->
+<div id="errorBox" class="error"></div>
+
+
+<!-- RESULT -->
+<div class="card result" id="result">
+
+<h2>📊 DAILY REPORT</h2>
+
+<div class="row">
+<span>Vendor</span>
+<span class="value" id="outVendor">-</span>
+</div>
+
+<div class="row">
+<span>Date</span>
+<span class="value" id="outDate">-</span>
+</div>
+
+
+<h3>💵 SALES</h3>
+
+<div class="row">
+<span>Regular Sales</span>
+<span class="value" id="outRegular">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Promo Sales</span>
+<span class="value" id="outPromo">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Add-on Sales</span>
+<span class="value" id="outAddon">₱0.00</span>
+</div>
+
+<div class="row total">
+<span>GROSS SALES</span>
+<span class="value" id="outSales">₱0.00</span>
+</div>
+
+<div class="status" id="salesStatus"></div>
+
+
+<h3>🐟 BONITO</h3>
+
+<div class="row">
+<span>Expected L.O.</span>
+<span class="value" id="outBonitoExpected">0g</span>
+</div>
+
+<div class="row">
+<span>Actual L.O.</span>
+<span class="value" id="outBonitoActual">0g</span>
+</div>
+
+<div class="row">
+<span>Used</span>
+<span class="value" id="outBonitoUsed">0g</span>
+</div>
+
+<div class="status" id="bonitoStatus"></div>
+
+
+<h3>🥓 FLOSS</h3>
+
+<div class="row">
+<span>Expected L.O.</span>
+<span class="value" id="outFlossExpected">0g</span>
+</div>
+
+<div class="row">
+<span>Actual L.O.</span>
+<span class="value" id="outFlossActual">0g</span>
+</div>
+
+<div class="row">
+<span>Used</span>
+<span class="value" id="outFlossUsed">0g</span>
+</div>
+
+<div class="status" id="flossStatus"></div>
+
+
+<h3>🥡 REGULAR CUPS</h3>
+
+<div class="row">
+<span>Expected L.O.</span>
+<span class="value" id="outCupsExpected">0</span>
+</div>
+
+<div class="row">
+<span>Actual L.O.</span>
+<span class="value" id="outCupsActual">0</span>
+</div>
+
+<div class="status" id="cupsStatus"></div>
+
+
+<h3>📦 PROMO BOXES</h3>
+
+<div class="row">
+<span>Expected L.O.</span>
+<span class="value" id="outBoxesExpected">0</span>
+</div>
+
+<div class="row">
+<span>Actual L.O.</span>
+<span class="value" id="outBoxesActual">0</span>
+</div>
+
+<div class="status" id="boxesStatus"></div>
+
+
+<h3>💰 MONEY RECONCILIATION</h3>
+
+<div class="row">
+<span>Gross Sales</span>
+<span class="value" id="outTotalSales">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Gas</span>
+<span class="value" id="outGas">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Other Expenses</span>
+<span class="value" id="outExpenses">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Expected Remit</span>
+<span class="value" id="outExpectedRemit">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Cash Remit</span>
+<span class="value" id="outRemit">₱0.00</span>
+</div>
+
+<div class="row">
+<span>GCash</span>
+<span class="value" id="outGcash">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Actual Funds</span>
+<span class="value" id="outActualFunds">₱0.00</span>
+</div>
+
+<div class="status" id="moneyStatus"></div>
+
+
+<!-- SALARY -->
+<div class="card salary">
+
+<h2>💸 SALARY COMPUTATION</h2>
+
+<div class="row">
+<span>Salary Base</span>
+<span class="value" id="outSalaryBase">₱0.00</span>
+</div>
+
+<div class="row">
+<span>Salary Rate</span>
+<span class="value">20%</span>
+</div>
+
+<div class="row">
+<span>Gross Salary</span>
+<span class="value" id="outGrossSalary">₱0.00</span>
+</div>
+
+<hr>
+
+<div class="row">
+<span>FINAL SALARY</span>
+<span class="value final" id="outFinalSalary">₱0.00</span>
+</div>
+
+<div class="small">
+Salary = GROSS SALES × 20%
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function getNum(id){
+  var element = document.getElementById(id);
+
+  if(!element){
+    throw new Error("Missing input: " + id);
+  }
+
+  var value = parseFloat(element.value);
+
+  if(isNaN(value)){
+    return 0;
+  }
+
+  return value;
+}
+
+
+function setText(id, text){
+  var element = document.getElementById(id);
+
+  if(!element){
+    throw new Error("Missing output: " + id);
+  }
+
+  element.textContent = text;
+}
+
+
+function peso(value){
+  return "₱" + Number(value).toFixed(2);
+}
+
+
+function grams(value){
+  return Number(value).toFixed(2) + " g";
+}
+
+
+function setStatus(id, type, text){
+
+  var element = document.getElementById(id);
+
+  element.className = "status " + type;
+  element.textContent = text;
+
+}
+
+
+function checkAll(){
+
+  var errorBox = document.getElementById("errorBox");
+
+  try{
+
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+
+
+    /* =========================
+       VENDOR
+    ========================= */
+
+    var vendor = document.getElementById("vendor").value.trim();
+    var date = document.getElementById("date").value;
+
+    if(vendor === ""){
+      vendor = "N/A";
+    }
+
+    if(date === ""){
+      date = "N/A";
+    }
+
+
+    /* =========================
+       STARTING INVENTORY
+    ========================= */
+
+    var startBonito = getNum("startBonito");
+    var startFloss = getNum("startFloss");
+    var startCups = getNum("startCups");
+    var startBoxes = getNum("startBoxes");
+
+
+    /* =========================
+       STANDARDS
+    ========================= */
+
+    var regBonitoMin = getNum("regBonitoMin");
+    var regBonitoMax = getNum("regBonitoMax");
+    var regFloss = getNum("regFloss");
+
+    var promoBonitoMin = getNum("promoBonitoMin");
+    var promoBonitoMax = getNum("promoBonitoMax");
+    var promoFloss = getNum("promoFloss");
+
+
+    /* =========================
+       REGULAR SALES
+    ========================= */
+
+    var regClassic = getNum("regClassic");
+    var regPremium = getNum("regPremium");
+    var regMelted = getNum("regMelted");
+    var regOverload = getNum("regOverload");
+
+
+    /* =========================
+       PROMO SALES
+    ========================= */
+
+    var promoClassic = getNum("promoClassic");
+    var promoPremium = getNum("promoPremium");
+    var promoMelted = getNum("promoMelted");
+    var promoOverload = getNum("promoOverload");
+
+
+    /* =========================
+       ADD-ONS
+    ========================= */
+
+    var addonBonito = getNum("addonBonito");
+    var addonFloss = getNum("addonFloss");
+
+
+    /* =========================
+       SALES COMPUTATION
+    ========================= */
+
+    var regularSales =
+      (regClassic * 60) +
+      (regPremium * 65) +
+      (regMelted * 70) +
+      (regOverload * 80);
+
+    var promoSales =
+      (promoClassic * 120) +
+      (promoPremium * 130) +
+      (promoMelted * 140) +
+      (promoOverload * 160);
+
+    var addonSales =
+      (addonBonito * 10) +
+      (addonFloss * 10);
+
+    var totalSales =
+      regularSales +
+      promoSales +
+      addonSales;
+
+
+    /* =========================
+       INVENTORY USAGE
+    ========================= */
+
+    var regularBonitoOrders =
+      regClassic +
+      regMelted +
+      regOverload;
+
+    var promoBonitoOrders =
+      promoClassic +
+      promoMelted +
+      promoOverload;
+
+    var minBonitoUse =
+      (regularBonitoOrders * regBonitoMin) +
+      (promoBonitoOrders * promoBonitoMin) +
+      (addonBonito * 2);
+
+    var maxBonitoUse =
+      (regularBonitoOrders * regBonitoMax) +
+      (promoBonitoOrders * promoBonitoMax) +
+      (addonBonito * 2);
+
+    var expectedBonitoMin =
+      startBonito - maxBonitoUse;
+
+    var expectedBonitoMax =
+      startBonito - minBonitoUse;
+
+
+    var regularFlossOrders =
+      regPremium +
+      regOverload;
+
+    var promoFlossOrders =
+      promoPremium +
+      promoOverload;
+
+    var flossUsed =
+      (regularFlossOrders * regFloss) +
+      (promoFlossOrders * promoFloss) +
+      addonFloss;
+
+    var expectedFloss =
+      startFloss - flossUsed;
+
+
+    var totalRegularOrders =
+      regClassic +
+      regPremium +
+      regMelted +
+      regOverload;
+
+    var totalPromoOrders =
+      promoClassic +
+      promoPremium +
+      promoMelted +
+      promoOverload;
+
+    var expectedCups =
+      startCups - totalRegularOrders;
+
+    var expectedBoxes =
+      startBoxes - totalPromoOrders;
+
+
+    /* =========================
+       ACTUAL L.O.
+    ========================= */
+
+    var actualBonito = getNum("actualBonito");
+    var actualFloss = getNum("actualFloss");
+    var actualCups = getNum("actualCups");
+    var actualBoxes = getNum("actualBoxes");
+
+
+    /* =========================
+       MONEY
+    ========================= */
+
+    var remit = getNum("remit");
+    var gcash = getNum("gcash");
+    var gas = getNum("gas");
+    var expenses = getNum("expenses");
+
+
+    /*
+      Expected Remit:
+      GROSS SALES - GAS - EXPENSES
+    */
+
+    var expectedRemit =
+      totalSales -
+      gas -
+      expenses;
+
+    var actualFunds =
+      remit +
+      gcash;
+
+    var moneyDifference =
+      actualFunds -
+      expectedRemit;
+
+
+    /* =========================
+       SALARY
+       
+       IMPORTANT:
+       SALARY = GROSS SALES × 20%
+       
+       NOT REMIT.
+    ========================= */
+
+    var salaryBase = totalSales;
+
+    var grossSalary =
+      totalSales * 0.20;
+
+    var finalSalary =
+      grossSalary;
+
+
+    /* =========================
+       DISPLAY BASIC INFO
+    ========================= */
+
+    setText("outVendor", vendor);
+    setText("outDate", date);
+
+
+    /* =========================
+       DISPLAY SALES
+    ========================= */
+
+    setText("outRegular", peso(regularSales));
+    setText("outPromo", peso(promoSales));
+    setText("outAddon", peso(addonSales));
+    setText("outSales", peso(totalSales));
+
+    setStatus(
+      "salesStatus",
+      "ok",
+      "✓ GROSS SALES COMPUTED"
+    );
+
+
+    /* =========================
+       BONITO STATUS
+    ========================= */
+
+    setText(
+      "outBonitoExpected",
+      grams(expectedBonitoMin) +
+      " – " +
+      grams(expectedBonitoMax)
+    );
+
+    setText(
+      "outBonitoActual",
+      grams(actualBonito)
+    );
+
+    setText(
+      "outBonitoUsed",
+      grams(startBonito - actualBonito)
+    );
+
+
+    if(
+      actualBonito >= expectedBonitoMin - 0.01 &&
+      actualBonito <= expectedBonitoMax + 0.01
+    ){
+
+      setStatus(
+        "bonitoStatus",
+        "ok",
+        "✓ SAKTO"
+      );
+
+    }
+    else if(
+      actualBonito < expectedBonitoMin
+    ){
+
+      setStatus(
+        "bonitoStatus",
+        "short",
+        "✕ SHORT"
+      );
+
+    }
+    else{
+
+      setStatus(
+        "bonitoStatus",
+        "extra",
+        "✕ SOBRA"
+      );
+
+    }
+
+
+    /* =========================
+       FLOSS STATUS
+    ========================= */
+
+    setText(
+      "outFlossExpected",
+      grams(expectedFloss)
+    );
+
+    setText(
+      "outFlossActual",
+      grams(actualFloss)
+    );
+
+    setText(
+      "outFlossUsed",
+      grams(startFloss - actualFloss)
+    );
+
+
+    if(
+      Math.abs(actualFloss - expectedFloss) < 0.01
+    ){
+
+      setStatus(
+        "flossStatus",
+        "ok",
+        "✓ SAKTO"
+      );
+
+    }
+    else if(
+      actualFloss < expectedFloss
+    ){
+
+      setStatus(
+        "flossStatus",
+        "short",
+        "✕ SHORT"
+      );
+
+    }
+    else{
+
+      setStatus(
+        "flossStatus",
+        "extra",
+        "✕ SOBRA"
+      );
+
+    }
+
+
+    /* =========================
+       CUPS STATUS
+    ========================= */
+
+    setText(
+      "outCupsExpected",
+      Number(expectedCups).toFixed(0)
+    );
+
+    setText(
+      "outCupsActual",
+      Number(actualCups).toFixed(0)
+    );
+
+
+    if(
+      Math.abs(actualCups - expectedCups) < 0.01
+    ){
+
+      setStatus(
+        "cupsStatus",
+        "ok",
+        "✓ SAKTO"
+      );
+
+    }
+    else if(
+      actualCups < expectedCups
+    ){
+
+      setStatus(
+        "cupsStatus",
+        "short",
+        "✕ SHORT"
+      );
+
+    }
+    else{
+
+      setStatus(
+        "cupsStatus",
+        "extra",
+        "✕ SOBRA"
+      );
+
+    }
+
+
+    /* =========================
+       BOX STATUS
+    ========================= */
+
+    setText(
+      "outBoxesExpected",
+      Number(expectedBoxes).toFixed(0)
+    );
+
+    setText(
+      "outBoxesActual",
+      Number(actualBoxes).toFixed(0)
+    );
+
+
+    if(
+      Math.abs(actualBoxes - expectedBoxes) < 0.01
+    ){
+
+      setStatus(
+        "boxesStatus",
+        "ok",
+        "✓ SAKTO"
+      );
+
+    }
+    else if(
+      actualBoxes < expectedBoxes
+    ){
+
+      setStatus(
+        "boxesStatus",
+        "short",
+        "✕ SHORT"
+      );
+
+    }
+    else{
+
+      setStatus(
+        "boxesStatus",
+        "extra",
+        "✕ SOBRA"
+      );
+
+    }
+
+
+    /* =========================
+       MONEY DISPLAY
+    ========================= */
+
+    setText(
+      "outTotalSales",
+      peso(totalSales)
+    );
+
+    setText(
+      "outGas",
+      peso(gas)
+    );
+
+    setText(
+      "outExpenses",
+      peso(expenses)
+    );
+
+    setText(
+      "outExpectedRemit",
+      peso(expectedRemit)
+    );
+
+    setText(
+      "outRemit",
+      peso(remit)
+    );
+
+    setText(
+      "outGcash",
+      peso(gcash)
+    );
+
+    setText(
+      "outActualFunds",
+      peso(actualFunds)
+    );
+
+
+    if(Math.abs(moneyDifference) < 0.01){
+
+      setStatus(
+        "moneyStatus",
+        "ok",
+        "✓ SAKTO"
+      );
+
+    }
+    else if(moneyDifference < 0){
+
+      setStatus(
+        "moneyStatus",
+        "short",
+        "✕ SHORT " + peso(Math.abs(moneyDifference))
+      );
+
+    }
+    else{
+
+      setStatus(
+        "moneyStatus",
+        "extra",
+        "✕ SOBRA " + peso(moneyDifference)
+      );
+
+    }
+
+
+    /* =========================
+       SALARY DISPLAY
+    ========================= */
+
+    setText(
+      "outSalaryBase",
+      peso(salaryBase)
+    );
+
+    setText(
+      "outGrossSalary",
+      peso(grossSalary)
+    );
+
+    setText(
+      "outFinalSalary",
+      peso(finalSalary)
+    );
+
+
+    /* =========================
+       SHOW RESULT
+    ========================= */
+
+    var result =
+      document.getElementById("result");
+
+    result.style.display = "block";
+
+
+    /*
+      Scroll to report
+    */
+
+    setTimeout(function(){
+
+      window.scrollTo(
+        0,
+        result.offsetTop
+      );
+
+    },100);
+
+
+  }
+  catch(error){
+
+    errorBox.style.display = "block";
+
+    errorBox.textContent =
+      "⚠️ ERROR: " + error.message;
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetAll(){
+
+  location.reload();
+
+}
+
+
+/* =========================
+   AUTO DATE
+========================= */
+
+window.onload = function(){
+
+  var dateInput =
+    document.getElementById("date");
+
+  var today =
+    new Date();
+
+  var year =
+    today.getFullYear();
+
+  var month =
+    today.getMonth() + 1;
+
+  var day =
+    today.getDate();
+
+  if(month < 10){
+    month = "0" + month;
+  }
+
+  if(day < 10){
+    day = "0" + day;
+  }
+
+  dateInput.value =
+    year + "-" +
+    month + "-" +
+    day;
+
+};
+
+</script>
+
+</body>
+</html>
